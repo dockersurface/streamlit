@@ -134,7 +134,7 @@ for group in futures_dict.keys():
             headerTooltip=col,  # 确保表头显示完整
             sortable=False,      # 禁用排序
             lockPosition=True,    # 固定表头，禁止移动
-            flex=1           # 固定列宽（可根据需要调整宽度）
+            flex=1 if col != "时间" else .7  # 使用 flex 参数设置宽度比例
         )
     grid_options = gb.build()
     
@@ -145,6 +145,7 @@ for group in futures_dict.keys():
         theme="streamlit",  # 可选主题： "light", "dark", "blue", "streamlit"
         fit_columns_on_grid_load=True,
         reload_data=False,
+        domLayout='autoHeight',  # 禁用垂直滚动条，使高度自动适应
     )
     # 打印该组的宽格式数据
     # print(f"组 {group} 的宽格式数据：")
