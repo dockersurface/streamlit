@@ -126,8 +126,14 @@ for group in futures_dict.keys():
     # 使用 AgGrid 优化展示
     gb = GridOptionsBuilder.from_dataframe(df_wide_group)
     # gb.configure_pagination(paginationAutoPageSize=True)  # 自动分页
-    gb.configure_side_bar()  # 侧边栏
-    gb.configure_column("时间", pinned="left")  # 固定时间列
+    # 显示完整表头，禁用排序
+    for col in df_wide_group.columns:
+        gb.configure_column(
+            col,
+            pinned="left" if col == "时间" else None,  # 固定时间列
+            headerTooltip=col,  # 确保表头显示完整
+            sortable=False      # 禁用排序
+        )
     grid_options = gb.build()
     
     AgGrid(
