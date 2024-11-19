@@ -137,6 +137,8 @@ for group in futures_dict.keys():
             flex=1 if col != "时间" else .7  # 使用 flex 参数设置宽度比例
         )
     grid_options = gb.build()
+    grid_options["domLayout"] = "autoHeight"  # 自动高度
+    grid_options["suppressVerticalScroll"] = True  # 禁用垂直滚动条
     
     AgGrid(
         df_wide_group,
@@ -145,7 +147,6 @@ for group in futures_dict.keys():
         theme="streamlit",  # 可选主题： "light", "dark", "blue", "streamlit"
         fit_columns_on_grid_load=True,
         reload_data=False,
-        domLayout='autoHeight',  # 禁用垂直滚动条，使高度自动适应
     )
     # 打印该组的宽格式数据
     # print(f"组 {group} 的宽格式数据：")
