@@ -65,7 +65,7 @@ futures_dict = {
 # 获取现货指数数据
 spot_data = {}
 for index in spot_indices:
-    data = ak.index_zh_a_hist_min_em(symbol=index, period="15", start_date=start_date_str, end_date=end_date_str)
+    data = ak.index_zh_a_hist_min_em(symbol=index, period="5", start_date=start_date_str, end_date=end_date_str)
     data.set_index("时间", inplace=True)
     spot_data[index] = data["收盘"]
 
@@ -73,7 +73,7 @@ for index in spot_indices:
 futures_data = {}
 for fut, contracts in futures_dict.items():
     for contract in contracts:
-        data = ak.futures_zh_minute_sina(symbol=contract, period="15")
+        data = ak.futures_zh_minute_sina(symbol=contract, period="5")
         data.set_index("datetime", inplace=True)
         futures_data[contract] = data["close"]
 
