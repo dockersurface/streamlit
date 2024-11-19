@@ -115,7 +115,7 @@ df_long = pd.concat(long_data, ignore_index=True)
 for group in futures_dict.keys():
     st.subheader(f"期差表格 - {index_name_map[group]}")
     group_data = df_long[df_long["分组"] == group]
-    group_data['时间'] = group_data['时间'].dt.strftime('%Y-%m-%d %H:%M')
+    group_data['时间'] = group_data['时间'].dt.strftime('%H:%M')
         # 将长格式数据转换为宽格式
     df_wide_group = group_data.pivot(index='时间', columns='合约', values='期差值')
     # 重置索引，使'时间'列变回数据框的一列
