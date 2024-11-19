@@ -130,9 +130,10 @@ for group in futures_dict.keys():
     for col in df_wide_group.columns:
         gb.configure_column(
             col,
-            pinned="left" if col == "时间" else None,  # 固定时间列
+            pinned=None,  # 固定时间列
             headerTooltip=col,  # 确保表头显示完整
-            sortable=False      # 禁用排序
+            sortable=False,      # 禁用排序
+            lockPosition=True    # 固定表头，禁止移动
         )
     grid_options = gb.build()
     
@@ -141,7 +142,7 @@ for group in futures_dict.keys():
         gridOptions=grid_options,
         enable_enterprise_modules=False,
         theme="streamlit",  # 可选主题： "light", "dark", "blue", "streamlit"
-        fit_columns_on_grid_load=True,
+        fit_columns_on_grid_load=False,
         reload_data=False,
     )
     # 打印该组的宽格式数据
