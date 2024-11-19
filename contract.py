@@ -2,6 +2,8 @@ import akshare as ak
 import pandas as pd
 import datetime as dt
 import streamlit as st
+from st_aggrid import AgGrid, GridOptionsBuilder
+
 
 # 获取当前日期
 today = dt.date.today()
@@ -116,18 +118,31 @@ for group in futures_dict.keys():
     group_data['时间'] = group_data['时间'].dt.strftime('%Y-%m-%d %H:%M')
         # 将长格式数据转换为宽格式
     df_wide_group = group_data.pivot(index='时间', columns='合约', values='期差值')
-    
     # 重置索引，使'时间'列变回数据框的一列
     df_wide_group.reset_index(inplace=True)
-    
     # 将宽格式数据四舍五入至两位小数
     df_wide_group = df_wide_group.round(2)
 
+    # 使用 AgGrid 优化展示
+    gb = GridOptionsBuilder.from_dataframe(df_wide_group)
+    # gb.configure_pagination(paginationAutoPageSize=True)  # 自动分页
+    gb.configure_side_bar()  # 侧边栏
+    gb.configure_column("时间", pinned="left")  # 固定时间列
+    grid_options = gb.build()
+    
+    AgGrid(
+        df_wide_group,
+        gridOptions=grid_options,
+        enable_enterprise_modules=False,
+        theme="streamlit",  # 可选主题： "light", "dark", "blue", "streamlit"
+        fit_columns_on_grid_load=True,
+        reload_data=False,
+    )
     # 打印该组的宽格式数据
     # print(f"组 {group} 的宽格式数据：")
     # print(df_wide_group)
-    print("\n")
-    st.table(df_wide_group)
+    # print("\n")
+    # st.table(df_wide_group)
     # print(group_data)
     # st.bar_chart(data=group_data, x="时间", y="期差值", color="合约", stack=False)
     
