@@ -130,7 +130,7 @@ for group in futures_dict.keys():
     for col in df_wide_group.columns:
         gb.configure_column(
             col,
-            pinned=None,  # 固定时间列
+            pinned="left",  # 固定时间列
             headerTooltip=col,  # 确保表头显示完整
             sortable=False,      # 禁用排序
             lockPosition=True    # 固定表头，禁止移动
