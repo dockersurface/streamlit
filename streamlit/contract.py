@@ -137,8 +137,6 @@ for group in futures_dict.keys():
             flex=1 if col != "时间" else .7  # 使用 flex 参数设置宽度比例
         )
     grid_options = gb.build()
-    grid_options["domLayout"] = "autoHeight"  # 自动高度
-    grid_options["suppressVerticalScroll"] = True  # 禁用垂直滚动条
     
     AgGrid(
         df_wide_group,
