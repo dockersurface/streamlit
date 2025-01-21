@@ -3,10 +3,69 @@ import pandas as pd
 import datetime as dt
 import streamlit as st
 from st_aggrid import AgGrid, GridOptionsBuilder
+import calendar
+from datetime import datetime, timedelta
 
+def update_futures_contracts(input_month):
+    futures_name_map = {
+        "000016": "IH",
+        "000300": "IF",
+        "000905": "IC",
+        "000852": "IM" 
+    }
+    
+    futures_dict = {}
+    
+    for code, prefix in futures_name_map.items():
+        # 提取年份和月份
+        year = input_month // 100
+        month = input_month % 100
+
+        # 当前合约
+        current = f"{year % 100:02d}{month:02d}"
+
+        # 次月合约
+        next_month = (month % 12) + 1
+        next_month_year = year + (month // 12)
+        next = f"{next_month_year % 100:02d}{next_month:02d}"
+
+        # 季度合约逻辑
+        if month in [1]:
+            quarter = f"{year % 100:02d}03"  # 当前季度合约为 3月
+        if month in [11, 12]:
+            quarter = f"{(year+1) % 100:02d}03"  # 当前季度合约为 3月
+        elif month in [2, 3, 4]:
+            quarter = f"{year % 100:02d}06"  # 当前季度合约为 6月
+        elif month in [5, 6, 7]:
+            quarter = f"{year % 100:02d}09"  # 当前季度合约为 9月
+        elif month in [8, 9, 10]:
+            quarter = f"{year % 100:02d}12"  # 当前季度合约为 9月
+            
+        futures_dict[code] = [f"{prefix}{current}", f"{prefix}{next}", f"{prefix}{quarter}"]
+    return futures_dict
+
+
+def is_passed_third_friday(date):
+    # 获取给定日期的年月
+    year = date.year
+    month = date.month
+    
+    # 获取该月的第一天和该月的总天数
+    first_day_of_month = datetime(year, month, 1)
+    last_day_of_month = datetime(year, month, calendar.monthrange(year, month)[1])
+
+    # 计算第三周的周五
+    # 获取该月第一天是星期几
+    first_day_weekday = first_day_of_month.weekday()  # Monday=0, Sunday=6
+    # 计算第三周的周五应该是：第一天的偏移+第三周的周五
+    third_friday_offset = (4 - first_day_weekday + 7 * 2) % 7  # 4表示周五
+    third_friday = first_day_of_month + timedelta(days=third_friday_offset)
+    
+    # 比较目标日期是否已经过了第三周的周五
+    return date >= third_friday
 
 # 获取当前日期
-today = dt.date.today()
+today = dt.datetime.today()
 
  # 格式化日期为字符串
 start_date_str = today.strftime('%Y-%m-%d 09:29:00')
@@ -57,12 +116,25 @@ index_name_map = {
 }
 spot_indices = ["000016", "000300", "000905", "000852"]
 # spot_indices = ["000016"]
-futures_dict = {
-    "000852": ["IM2501", "IM2502", "IM2503"],
-    "000905": ["IC2501", "IC2502", "IC2503"],
-    "000300": ["IF2501", "IF2502", "IF2503"],
-    "000016": ["IH2501", "IH2502", "IH2503"]
-}
+# 获取当前日期
+input_month = int(today.strftime('%y%m'))
+
+futures_dict = {}
+# 检查是否已过第三周的周五
+if is_passed_third_friday(today):
+    # 过了周五月份要加一
+    # 提取年份和月份
+    year = input_month // 100
+    month = input_month % 100
+    # 次月合约
+    next_month = (month % 12) + 1
+    next_month_year = year + (month // 12)
+    next = f"{next_month_year % 100:02d}{next_month:02d}"
+    futures_dict = update_futures_contracts(int(next))
+else:
+    futures_dict = update_futures_contracts(input_month)
+
+print(futures_dict)
 
 # 获取现货指数数据
 spot_data = {}
@@ -76,6 +148,7 @@ futures_data = {}
 for fut, contracts in futures_dict.items():
     for contract in contracts:
         data = ak.futures_zh_minute_sina(symbol=contract, period="5")
+        print(data)
         data.set_index("datetime", inplace=True)
         futures_data[contract] = data["close"]
 
