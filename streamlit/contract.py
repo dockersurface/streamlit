@@ -52,14 +52,16 @@ def is_passed_third_friday(date):
     
     # 获取该月的第一天和该月的总天数
     first_day_of_month = datetime(year, month, 1)
-    last_day_of_month = datetime(year, month, calendar.monthrange(year, month)[1])
-
-    # 计算第三周的周五
+    
     # 获取该月第一天是星期几
     first_day_weekday = first_day_of_month.weekday()  # Monday=0, Sunday=6
-    # 计算第三周的周五应该是：第一天的偏移+第三周的周五
-    third_friday_offset = (4 - first_day_weekday + 7 * 2) % 7  # 4表示周五
-    third_friday = first_day_of_month + timedelta(days=third_friday_offset)
+    
+    # 计算第一个周五的日期
+    first_friday_offset = (4 - first_day_weekday + 7) % 7
+    first_friday = first_day_of_month + timedelta(days=first_friday_offset)
+    
+    # 第三个周五是第一个周五后14天
+    third_friday = first_friday + timedelta(weeks=2)
     
     # 比较目标日期是否已经过了第三周的周五
     return date >= third_friday
@@ -134,7 +136,7 @@ if is_passed_third_friday(today):
 else:
     futures_dict = update_futures_contracts(input_month)
 
-print(futures_dict)
+print(is_passed_third_friday(today), futures_dict, 'futures_dict')
 
 # 获取现货指数数据
 spot_data = {}
