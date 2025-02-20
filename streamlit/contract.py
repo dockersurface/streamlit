@@ -142,17 +142,20 @@ print(is_passed_third_friday(today), futures_dict, 'futures_dict')
 spot_data = {}
 for index in spot_indices:
     data = ak.index_zh_a_hist_min_em(symbol=index, period="5", start_date=start_date_str, end_date=end_date_str)
+    print(data)
     data.set_index("时间", inplace=True)
     spot_data[index] = data["收盘"]
+print(spot_data)
 
 # 获取期指数据
 futures_data = {}
 for fut, contracts in futures_dict.items():
     for contract in contracts:
         data = ak.futures_zh_minute_sina(symbol=contract, period="5")
-        print(data)
         data.set_index("datetime", inplace=True)
         futures_data[contract] = data["close"]
+        
+print(futures_data)
 
 # 合并数据
 df_spot = pd.DataFrame(spot_data)
