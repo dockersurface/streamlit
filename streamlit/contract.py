@@ -152,6 +152,7 @@ futures_data = {}
 for fut, contracts in futures_dict.items():
     for contract in contracts:
         data = ak.futures_zh_minute_sina(symbol=contract, period="5")
+        print(data)
         data.set_index("datetime", inplace=True)
         futures_data[contract] = data["close"]
         
