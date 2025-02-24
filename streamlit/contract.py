@@ -64,7 +64,7 @@ def is_passed_third_friday(date):
     third_friday = first_friday + timedelta(weeks=2)
     
     # 比较目标日期是否已经过了第三周的周五
-    return date >= third_friday
+    return date > third_friday
 
 # 获取当前日期
 today = dt.datetime.today()
