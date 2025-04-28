@@ -1,4 +1,4 @@
-akshare==1.16.61
+akshare==1.16.77
 streamlit==1.39.0
 pandas==2.2.3
 streamlit-aggrid==1.0.5
